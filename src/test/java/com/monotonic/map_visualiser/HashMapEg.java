@@ -2,11 +2,9 @@ package com.monotonic.map_visualiser;
 
 import java.util.HashMap;
 
-public class HashMapEg
-{
+public class HashMapEg {
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         Console console = new Console();
         console.clear();
 
@@ -27,8 +25,7 @@ public class HashMapEg
         console.await();*/
 
         final HashMap<BadHash, String> treeified = new HashMap<>();
-        for (int i = 0; i < 20; i++)
-        {
+        for (int i = 0; i < 20; i++) {
             final String value = String.valueOf(i);
             treeified.put(new BadHash(value, 1), value);
             console.clear();

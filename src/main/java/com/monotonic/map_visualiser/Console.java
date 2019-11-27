@@ -5,8 +5,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.stream.IntStream;
 
-public class Console
-{
+public class Console {
     private static final String ANSI_COLOUR_RESET = "\u001B[0m";
     private static final String CLEAR = "\033[H\033[2J";
     private static final String ANSI_RED = "\u001B[31m";
@@ -16,71 +15,56 @@ public class Console
     private final PrintStream out;
     private final InputStream in;
 
-    public Console()
-    {
+    public Console() {
         this(System.out, System.in);
     }
 
-    public Console(final PrintStream out, final InputStream in)
-    {
+    public Console(final PrintStream out, final InputStream in) {
         this.out = out;
         this.in = in;
     }
 
-    public void await()
-    {
-        try
-        {
+    public void await() {
+        try {
             in.read();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void clear()
-    {
+    public void clear() {
         print(CLEAR);
     }
 
-    public void println(final Object value)
-    {
+    public void println(final Object value) {
         out.println(value);
     }
 
-    public void print(final Object value)
-    {
+    public void print(final Object value) {
         out.print(value);
     }
 
-    public void printf(final String format, final Object... args)
-    {
+    public void printf(final String format, final Object... args) {
         out.printf(format, args);
     }
 
-    public void red()
-    {
+    public void red() {
         print(ANSI_RED);
     }
 
-    public void yellow()
-    {
+    public void yellow() {
         print(ANSI_YELLOW);
     }
 
-    public void green()
-    {
+    public void green() {
         print(ANSI_GREEN);
     }
 
-    public void resetColour()
-    {
+    public void resetColour() {
         print(ANSI_COLOUR_RESET);
     }
 
-    public void indent(final int index)
-    {
+    public void indent(final int index) {
         IntStream.range(0, index).forEach(i -> print('\t'));
     }
 }

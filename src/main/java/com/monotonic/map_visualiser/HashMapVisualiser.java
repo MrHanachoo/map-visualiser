@@ -5,16 +5,14 @@ import java.util.HashMap;
 import java.util.IntSummaryStatistics;
 import java.util.stream.Stream;
 
-public class HashMapVisualiser
-{
+public class HashMapVisualiser {
     private static final Field thresholdField;
     private static final Field tableField;
     private static final Field nextField;
     private static final Field leftField;
     private static final Field rightField;
 
-    static
-    {
+    static {
         Type node = new Type("java.util.HashMap$Node");
         Type treeNode = new Type("java.util.HashMap$TreeNode");
         Type hashMap = new Type(HashMap.class);
@@ -28,54 +26,48 @@ public class HashMapVisualiser
 
     private final Console console;
 
-    public HashMapVisualiser(final Console console)
-    {
+    public HashMapVisualiser(final Console console) {
         this.console = console;
     }
 
-    public void visualise(final HashMap<?, ?> map)
-    {
+    public void visualise(final HashMap<?, ?> map) {
         Object[] table = (Object[]) Type.get(tableField, map);
 
         console.printf(
-            "Size: %d, Resize: %s, Bin Count: %d%n",
-            map.size(), Type.get(thresholdField, map), table.length);
+                "Size: %d, Resize: %s, Bin Count: %d%n",
+                map.size(), Type.get(thresholdField, map), table.length);
 
         final IntSummaryStatistics collisions = Stream.of(table)
-            .mapToInt(row ->
-            {
-                if (row == null)
+                .mapToInt(row ->
                 {
-                    console.println("[]");
-                    return 0;
-                }
+                    if (row == null) {
+                        console.println("[]");
+                        return 0;
+                    }
 
-                switch (row.getClass().getSimpleName())
-                {
-                    case "TreeNode":
-                        return visualiseTree(row);
+                    switch (row.getClass().getSimpleName()) {
+                        case "TreeNode":
+                            return visualiseTree(row);
 
-                    case "Node":
-                        return visualiseList(row);
+                        case "Node":
+                            return visualiseList(row);
 
-                    default:
-                        throw new IllegalArgumentException("Unknown type of row");
-                }
-            })
-            .summaryStatistics();
+                        default:
+                            throw new IllegalArgumentException("Unknown type of row");
+                    }
+                })
+                .summaryStatistics();
 
         console.printf(
-            "Collisions: Max: %d, Ave: %s, Total: %d%n",
-            collisions.getMax(),
-            collisions.getAverage(),
-            collisions.getSum());
+                "Collisions: Max: %d, Ave: %s, Total: %d%n",
+                collisions.getMax(),
+                collisions.getAverage(),
+                collisions.getSum());
     }
 
-    private int visualiseList(Object node)
-    {
+    private int visualiseList(Object node) {
         final Object next = Type.get(nextField, node);
-        if (next == null)
-        {
+        if (next == null) {
             console.green();
             printNode(node);
             console.resetColour();
@@ -84,8 +76,7 @@ public class HashMapVisualiser
 
         console.red();
         int index = 0;
-        while (node != null)
-        {
+        while (node != null) {
             console.indent(index);
             printNode(node);
 
@@ -97,34 +88,29 @@ public class HashMapVisualiser
         return index;
     }
 
-    private int visualiseTree(final Object node)
-    {
+    private int visualiseTree(final Object node) {
         console.yellow();
         final int collisions = visualiseSubTree(node, 0);
         console.resetColour();
         return collisions;
     }
 
-    private int visualiseSubTree(final Object node, int index)
-    {
+    private int visualiseSubTree(final Object node, int index) {
         console.indent(index);
         printNode(node);
 
         return 1
-             + visualiseBranch(node, index, leftField)
-             + visualiseBranch(node, index, rightField);
+                + visualiseBranch(node, index, leftField)
+                + visualiseBranch(node, index, rightField);
     }
 
-    private void printNode(final Object node)
-    {
+    private void printNode(final Object node) {
         console.printf("[%s]\n", node);
     }
 
-    private int visualiseBranch(final Object node, final int index, final Field field)
-    {
+    private int visualiseBranch(final Object node, final int index, final Field field) {
         Object branch = Type.get(field, node);
-        if (branch != null)
-        {
+        if (branch != null) {
             return visualiseSubTree(branch, index + 1);
         }
         return 0;
